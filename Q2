@@ -1,0 +1,6 @@
+
+git init
+git add .
+git commit -m "Initial commit"
+git remote add origin https://github.com/aansh919821/Competitive-Graph-Programming.git
+git push -u origin main  

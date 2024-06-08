@@ -1,0 +1,25 @@
+int Solution::solve(int A, vector<vector<int>> &B) {
+    int M = B.size();
+    vector<vector<int>>adj(A+1);
+    for(int i = 0; i<M; i++) {
+        adj[B[i][0]].push_back(B[i][1]);
+    }
+    int vis[A+1] = {0};
+    vis[1] = 1;
+    queue<int>q;
+    q.push(1);
+    while(!q.empty()){
+        int x = q.front();
+        q.pop();
+        for(auto it: adj[x]){
+            if (!vis[it]){
+                vis[it] = 1;
+                q.push(it);
+            }
+        }
+    }
+    if(vis[A] == 0){
+        return 0;
+    }
+    return 1;
+}

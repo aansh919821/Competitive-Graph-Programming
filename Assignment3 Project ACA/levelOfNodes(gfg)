@@ -1,0 +1,27 @@
+class Solution
+{
+	public:
+	int nodeLevel(int V, vector<int> adj[], int X) 
+	{
+        int ctr = 0; 
+        int vis[V] = {0};
+        vis[0] = 1;
+        queue<pair<int,int>>q;
+        q.push({0,0});
+        while(!q.empty()){
+            int node = q.front().first;
+            int cnt = q.front().second;
+            q.pop();
+            for(auto it: adj[node]){
+                if (!vis[it]){
+                    vis[it] = 1;
+                    q.push({it,cnt+1});
+                    if (it == X){
+                        return cnt+1;
+                    }
+                }
+            }
+        }
+        return -1;
+	}
+};

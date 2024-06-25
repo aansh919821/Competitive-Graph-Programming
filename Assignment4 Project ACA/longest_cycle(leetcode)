@@ -1,0 +1,39 @@
+class Solution {
+public:
+    void dfs(int node, vector<int>& edges, vector<int>& vis, vector<int>& onStack, int& cycleLength, int& maxCycleLength) {
+        vis[node] = 1;
+        onStack[node] = 1;
+        
+        int next = edges[node];
+        if (next != -1) {
+            if (!vis[next]) {
+                dfs(next, edges, vis, onStack, cycleLength, maxCycleLength);
+            } else if (onStack[next]) {
+                int current = next;
+                do {
+                    cycleLength++;
+                    current = edges[current];
+                } while (current != next);
+                maxCycleLength = max(maxCycleLength, cycleLength);
+            }
+        }
+        
+        onStack[node] = 0;
+    }
+    
+    int longestCycle(vector<int>& edges) {
+        int n = edges.size();
+        vector<int> vis(n, 0);
+        vector<int> onStack(n, 0);
+        int maxCycleLength = -1;
+        
+        for (int i = 0; i < n; i++) {
+            if (!vis[i]) {
+                int cycleLength = 0;
+                dfs(i, edges, vis, onStack, cycleLength, maxCycleLength);
+            }
+        }
+        
+        return maxCycleLength;
+    }
+};

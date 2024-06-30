@@ -1,0 +1,52 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> dijkstra(int n, vector<vector<pair<int, int>>> &adj, int src) {
+    vector<int> dist(n + 1, INT_MAX);
+    dist[src] = 0;
+    set<pair<int, int>> st;
+    st.insert({0, src});
+
+    while (!st.empty()) {
+        auto [d, u] = *st.begin();
+        st.erase(st.begin());
+
+        for (auto &[v, w] : adj[u]) {
+            if (dist[u] + w < dist[v]) {
+                st.erase({dist[v], v});
+                dist[v] = dist[u] + w;
+                st.insert({dist[v], v});
+            }
+        }
+    }
+
+    return dist;
+}
+int Solution::solve(int A, vector<vector<int> > &B, int C, int D, vector<vector<int> > &E) {
+    vector<vector<pair<int, int>>> adj(A + 1);
+
+    for (auto edge : B) {
+        int u = edge[0], v = edge[1], w = edge[2];
+        adj[u].emplace_back(v, w);
+        adj[v].emplace_back(u, w);
+    }
+
+    vector<int> dist_from_C = dijkstra(A, adj, C);
+    vector<int> dist_from_D = dijkstra(A, adj, D);
+
+    int shortest_path = dist_from_C[D];
+    
+    for (auto extra : E) {
+        int u = extra[0], v = extra[1], w = extra[2];
+
+        if (dist_from_C[u] != INT_MAX && dist_from_D[v] != INT_MAX) {
+            shortest_path = min(shortest_path, dist_from_C[u] + w + dist_from_D[v]);
+        }
+        if (dist_from_C[v] != INT_MAX && dist_from_D[u] != INT_MAX) {
+            shortest_path = min(shortest_path, dist_from_C[v] + w + dist_from_D[u]);
+        }
+    }
+
+    if (shortest_path == INT_MAX) return -1;
+    return shortest_path;
+}

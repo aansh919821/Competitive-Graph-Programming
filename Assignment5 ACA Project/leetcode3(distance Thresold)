@@ -1,0 +1,54 @@
+class Solution {
+public:
+    int findTheCity(int N, vector<vector<int>>& edges, int distanceThreshold) {
+        vector<vector<int>>distance(N, vector<int>(N, INT_MAX));
+        vector<vector<pair<int, int>>>adj(N);
+        for(auto it : edges){
+            distance[it[0]][it[1]] = it[2];
+            distance[it[1]][it[0]] = it[2];
+            adj[it[0]].push_back({it[1], it[2]});
+            adj[it[1]].push_back({it[0], it[2]});
+        }
+        for(int i = 0; i<N; i++ ) {
+            vector<int>dist(N, INT_MAX);
+            set<pair<int,int>>st;
+            st.insert({0, i});
+            dist[i] = 0;
+            while(!st.empty()){
+                auto it  = *(st.begin());
+                int dis = it.first;
+                int node = it.second;
+                st.erase(it);
+                for(auto it: adj[node]){
+                    int adjNode  = it.first;
+                    int edgewt = it.second;
+                    if(edgewt + dis<dist[adjNode]){
+                        if (dist[adjNode]!= INT_MAX){
+                            st.erase({dist[adjNode], adjNode});
+                        }
+                        dist[adjNode] = edgewt +dis;
+                        st.insert({dist[adjNode], adjNode});
+                    }
+                }
+            }
+            for (int j = 0; j < N; j++) {
+                distance[i][j] = dist[j];
+            }
+        }
+        int cityNo = -1;
+        int cntCity = N;
+        for(int i = 0; i<N; i++){
+            int cnt = 0;
+            for(int j = 0; j<N; j++){
+                if(distance[i][j] <= distanceThreshold){
+                    cnt++;
+                }
+            }
+            if (cnt<=cntCity){
+                cntCity = cnt;
+                cityNo = i;
+            }
+        }
+        return cityNo;
+    }
+};

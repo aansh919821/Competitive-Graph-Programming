@@ -1,0 +1,70 @@
+#include <bits/stdc++.h>
+#define ll long long 
+using namespace std;
+
+vector<ll> dijkstra(ll n, vector<vector<pair<ll, ll>>>& adj, ll src) {
+    vector<ll> dist(n + 1, LLONG_MAX);
+    vector<ll> parent(n + 1, -1);
+    set<pair<ll, ll>> st;  // Using set instead of priority queue
+    
+    dist[src] = 0;
+    st.insert({0, src});
+    
+    while (!st.empty()) {
+        ll dis = st.begin()->first;
+        ll node = st.begin()->second;
+        st.erase(st.begin());
+        
+        for (auto &edge : adj[node]) {
+            ll adjNode = edge.first;
+            ll edgeWt = edge.second;
+            
+            if (dis + edgeWt < dist[adjNode]) {
+                if (dist[adjNode] != LLONG_MAX) {
+                    st.erase(st.find({dist[adjNode], adjNode}));
+                }
+                dist[adjNode] = dis + edgeWt;
+                parent[adjNode] = node;
+                st.insert({dist[adjNode], adjNode});
+            }
+        }
+    }
+    
+    // Reconstruct the path from 1 to n
+    vector<ll> path;
+    for (ll v = n; v != -1; v = parent[v]) {
+        path.push_back(v);
+    }
+    reverse(path.begin(), path.end());
+    
+    // Check if there is a path from 1 to n
+    if (path[0] != 1 || path.back() != n) return {-1};
+    
+    return path;
+}
+
+int main() {
+    ll n, m;
+    cin >> n >> m;
+    vector<vector<pair<ll, ll>>> adj(n + 1);
+    
+    for (ll i = 0; i < m; ++i) {
+        ll u, v, w;
+        cin >> u >> v >> w;
+        adj[u].push_back({v, w});
+        adj[v].push_back({u, w});
+    }
+    
+    vector<ll> shortest_path = dijkstra(n, adj, 1);
+    
+    if (shortest_path[0] == -1) {
+        cout << -1 << endl;
+    } else {
+        for (ll node : shortest_path) {
+            cout << node << " ";
+        }
+        cout << endl;
+    }
+    
+    return 0;
+}
